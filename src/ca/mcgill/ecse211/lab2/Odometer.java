@@ -120,19 +120,19 @@ public class Odometer implements Runnable {
       deltaTheta = (distL-distR)/TRACK; //in radians
       //System.out.println(deltaTheta);
       theta += Math.toDegrees(deltaTheta);
-      dX = deltaDisplacement*Math.sin(Math.toRadians(theta)); //needs to be in radians
+      dX = deltaDisplacement * Math.sin(Math.toRadians(theta)); //needs to be in radians
       dY = deltaDisplacement * Math.cos(Math.toRadians(theta));
       x = x+dX;
       y = y+dY;
       
       // TODO Remove this
-      System.out.println(x);
+     /* System.out.println(x);
       System.out.println(position[0]);
       
       x = 7;
       
       System.out.println(x);
-      System.out.println(position[0]);
+      System.out.println(position[0]); */
       // end remove this
       
       
