@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.lab2;
 
 import java.util.concurrent.locks.Condition;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -94,17 +95,42 @@ public class Odometer implements Runnable {
    */
   public void run() {
     long updateStart, updateEnd;
-
+   
+    
     while (true) {
       updateStart = System.currentTimeMillis();
-
-      leftMotorTachoCount = leftMotor.getTachoCount();
-      rightMotorTachoCount = rightMotor.getTachoCount();
-
+      
+      
+      int newLeftMotorTachoCount = leftMotor.getTachoCount();
+      int newRightMotorTachoCount = rightMotor.getTachoCount();
+      
       // TODO Calculate new robot position based on tachometer counts
+
+      double distL, distR, deltaDisplacement, deltaTheta, dX, dY;
+      
+      distL = Math.PI*WHEEL_RAD*(newLeftMotorTachoCount-leftMotorTachoCount)/180; //in radians
+      distR = Math.PI*WHEEL_RAD*(newRightMotorTachoCount-rightMotorTachoCount)/180; //in radians
+      position = getXYT();
+      
+      
+      leftMotorTachoCount = newLeftMotorTachoCount;
+      rightMotorTachoCount = newRightMotorTachoCount;
+      
+      deltaDisplacement = 0.5*(distL+distR); //in radians
+      deltaTheta = (distL-distR)/TRACK; //in radians
+      //System.out.println(deltaTheta);
+      theta += Math.toDegrees(deltaTheta);
+      position[2]+=Math.toDegrees(deltaTheta);
+      dX = deltaDisplacement*Math.sin(Math.toRadians(position[2])); //needs to be in radians
+      dY = deltaDisplacement * Math.cos(Math.toRadians(position[2]));
+      x = x+dX;
+      y = y+dY;
+      
       
       // TODO Update odometer values with new calculated values, eg
-      //odo.update(dx, dy, dtheta);
+      //odo.update(dx, dy, dtheta);\
+      odo.update(dX, dY, Math.toDegrees(deltaTheta)); 
+
 
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
