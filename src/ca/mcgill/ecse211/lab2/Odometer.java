@@ -125,15 +125,6 @@ public class Odometer implements Runnable {
       x = x+dX;
       y = y+dY;
       
-      // TODO Remove this
-      System.out.println(x);
-      System.out.println(position[0]);
-      
-      x = 7;
-      
-      System.out.println(x);
-      System.out.println(position[0]);
-      // end remove this
       
       
       // TODO Update odometer values with new calculated values, eg
