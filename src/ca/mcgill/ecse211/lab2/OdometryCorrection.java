@@ -10,11 +10,11 @@ public class OdometryCorrection implements Runnable {
   //private static final difference = 
   private Odometer odometer = Resources.odometer ;
   private EV3ColorSensor colorSensor = Resources.colorSensor;
-  private SampleProvider intensityVal = colorSensor.getRedMode();
+  //private SampleProvider intensityVal = colorSensor.getRedMode();
  
   
   //Array to store color detected by light sensor
-  private float sampleData[] = new float [intensityVal.sampleSize()];
+  private float sampleData[] = new float [1];
   
   
   //private float[] RGBValues = new float[3];
@@ -31,7 +31,9 @@ public class OdometryCorrection implements Runnable {
   private Boolean right =false;
   private Boolean left = false;
   
-  int i = 0;
+  private float brightness;
+  
+  //int i = 0;
 
   /*
    * Here is where the odometer correction code should be run.
@@ -42,34 +44,8 @@ public class OdometryCorrection implements Runnable {
     while (true) {
       correctionStart = System.currentTimeMillis();
 
-      intensityVal.fetchSample(sampleData, 0);
-      
-      
-        }
-      
-=======
-        }
-      }
-        
->>>>>>> 7e6276d2dd28176e23bfe49467d1f48650f70865
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+      colorSensor.getRedMode().fetchSample(sampleData, 0);
+      brightness = sampleData[0];
       
       //get current position of robot and define in terms of x, y, theta
       double currPosition[] = odometer.getXYT();
@@ -82,50 +58,87 @@ public class OdometryCorrection implements Runnable {
       //define accurate position in terms of x, y
       double correctX;
       
-      findDirection(currTheta);
-      if(up) { //going up, Y is increasing
-        while (lineCounter < 4) {
-          if(sampleData[i] * 100 < 30.00) { 
-            lineCounter++;
-            odometer.setY(TILE_SIZE * lineCounter);
+     
+      int i = 1;
+      int j = 1;
+      int k = 3;
+      int f = 3;
+
+      while(up) { //going up, Y is increasing
+        colorSensor.getRedMode().fetchSample(sampleData, 0);
+        brightness = sampleData[0];
+        //System.out.println(sampleData[0]);
+        if(brightness*100 < 30.00) {
+          Sound.beep();
+          odometer.setY(TILE_SIZE * i);
+          if(i>2) {
+            up = false;
+            right = true;
           }
-          i++;
+        
+        
+        i++;  
         }
-      }
-      if (right) { //going right, X is increasing
-        lineCounter = 0;
-        while (lineCounter < 3) {
-          if(sampleData[i] * 100 < 30.00) {
-            lineCounter++;
-            odometer.setX(TILE_SIZE * lineCounter);
-          }
-         i++;
-        }  
-      }
-         
-      if (down) { //going down, Y is decreasing
-        lineCounter = 3;
-        while (lineCounter > 0) {
-          if(sampleData[i] * 100 < 30.00) {
-            lineCounter--;
-            odometer.setY(TILE_SIZE * lineCounter);
-          }
-          i++;
-        }          
+        
+        
       }
       
-      if (left) { //going left, X is decreasing
-        lineCounter = 3;
-        double oldX = currPosition[0];
-        while (lineCounter > 0) {
-          if(sampleData[i] * 100 < 30.00) {
-            lineCounter--;
-            oldX-= TILE_SIZE;
-            odometer.setX(TILE_SIZE * lineCounter);
+      while(right) { //going right, X is increasing
+        colorSensor.getRedMode().fetchSample(sampleData, 0);
+        brightness = sampleData[0];
+        //System.out.println(sampleData[0]);
+        if(brightness*100 < 30.00) {
+          Sound.beep();
+          odometer.setX(TILE_SIZE * j);
+          if(j>2) {
+            right = false;
+            down = true;
           }
-          i++;
+        
+        
+        j++;  
         }
-     }
+        
+         
+      }
+      while(down) { //going right, X is increasing
+        colorSensor.getRedMode().fetchSample(sampleData, 0);
+        brightness = sampleData[0];
+        //System.out.println(sampleData[0]);
+        if(brightness*100 < 30.00) {
+          Sound.beep();
+          odometer.setY(TILE_SIZE * k);
+          if(k<2) {
+            down = false;
+            left = true;
+          }
+        
+        
+        k--;  
+        }
+       
+      }
+         
+      while(left) { //going right, X is increasing
+        colorSensor.getRedMode().fetchSample(sampleData, 0);
+        brightness = sampleData[0];
+        //System.out.println(sampleData[0]);
+        if(brightness*100 < 30.00) {
+          Sound.beep();
+          odometer.setX(TILE_SIZE * f);
+          if(f<2) {
+            left = false;
+            up = true;
+          }
+        
+        
+        f--;  
+        }
+        
+      }
+      
+     
+     
     
          
        
