@@ -43,11 +43,13 @@ public class OdometryCorrection implements Runnable {
 
       intensityVal.fetchSample(sampleData, 0);
       
-      for(int i = 0; i< 10; i++) {
-        if(sampleData[i]*100<35.00) {
-        System.out.println(sampleData[i]*100);
+      for(int i = 0; i< sampleData.length; i++) {
+        if((sampleData[i]*100)<26.00) {
+        Sound.beep();
         
-      }}
+      }
+        }
+      
       
       
       
