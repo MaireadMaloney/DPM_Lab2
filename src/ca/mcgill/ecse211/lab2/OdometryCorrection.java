@@ -33,8 +33,6 @@ public class OdometryCorrection implements Runnable {
 
   private float brightness;
 
-  // int i = 0;
-
   /*
    * Here is where the odometer correction code should be run.
    */
@@ -42,22 +40,11 @@ public class OdometryCorrection implements Runnable {
     long correctionStart, correctionEnd;
 
     while (true) {
+      int lineCounter = 1;
       correctionStart = System.currentTimeMillis();
 
       colorSensor.getRedMode().fetchSample(sampleData, 0);
       brightness = sampleData[0];
-
-      // get current position of robot and define in terms of x, y, theta
-      double currPosition[] = odometer.getXYT();
-      // double currX = currPosition[0];
-      // double currY = currPosition[1];
-      double currTheta = currPosition[2];
-      int lineCounter = 0;
-
-
-      // define accurate position in terms of x, y
-      double correctX;
-
 
       int i = 1;
       int j = 1;
@@ -67,7 +54,6 @@ public class OdometryCorrection implements Runnable {
       while (up) { // going up, Y is increasing
         colorSensor.getRedMode().fetchSample(sampleData, 0);
         brightness = sampleData[0];
-        // System.out.println(sampleData[0]);
         if (brightness * 100 < 30.00) {
           Sound.beep();
           odometer.setY(TILE_SIZE * i);
@@ -75,14 +61,9 @@ public class OdometryCorrection implements Runnable {
             up = false;
             right = true;
           }
-
-
           i++;
         }
-
-
       }
-
       while (right) { // going right, X is increasing
         colorSensor.getRedMode().fetchSample(sampleData, 0);
         brightness = sampleData[0];
@@ -94,12 +75,8 @@ public class OdometryCorrection implements Runnable {
             right = false;
             down = true;
           }
-
-
           j++;
         }
-
-
       }
       while (down) { // going right, X is increasing
         colorSensor.getRedMode().fetchSample(sampleData, 0);
@@ -112,8 +89,6 @@ public class OdometryCorrection implements Runnable {
             down = false;
             left = true;
           }
-
-
           k--;
         }
 
@@ -130,24 +105,9 @@ public class OdometryCorrection implements Runnable {
             left = false;
             up = true;
           }
-
-
           f--;
         }
-
       }
-
-
-
-      // TODO Trigger correction (When do I have information to correct?)
-
-      // TODO Calculate new (accurate) robot position
-
-
-
-      // TODO Update odometer with new calculated (and more accurate) values, eg:
-      // odometer.setXYT(0.3, 19.23, 5.0);
-
       // this ensures the odometry correction occurs only once every period
       correctionEnd = System.currentTimeMillis();
       if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
@@ -160,23 +120,4 @@ public class OdometryCorrection implements Runnable {
    * Finds the nearest right angle (0,90,180,270,etc) to the robots direction to determine if we are moving in the X or
    * the Y. We call X 0 and Y 90.
    */
-  private void findDirection(double t) {
-    int allowedError = 5;
-    /*
-     * checks to see if we are in the allowed range for any of the right angles.
-     */
-    if (Math.abs(t) < allowedError) {
-      up = true;
-    } else if (Math.abs(t - 90) < allowedError) {
-      right = true;
-    } else if (Math.abs(t - 180) < allowedError) {
-      left = true;
-    } else if (Math.abs(t - 270) < allowedError) {
-      down = true;
-    }
-
-    return;
-  }
-
-
 }

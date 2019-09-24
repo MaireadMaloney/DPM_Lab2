@@ -104,12 +104,11 @@ public class Odometer implements Runnable {
       newLeftMotorTachoCount = leftMotor.getTachoCount();
       newRightMotorTachoCount = rightMotor.getTachoCount();
 
-      // TODO Calculate new robot position based on tachometer counts
 
       double distL, distR, deltaDisplacement, deltaTheta, dX, dY;
 
-      distL = Math.PI * WHEEL_RAD * (newLeftMotorTachoCount - leftMotorTachoCount) / 180; // in radians
-      distR = Math.PI * WHEEL_RAD * (newRightMotorTachoCount - rightMotorTachoCount) / 180; // in radians
+      distL = Math.PI * WHEEL_RAD * (newLeftMotorTachoCount - leftMotorTachoCount) / 180; //distance for L in radians
+      distR = Math.PI * WHEEL_RAD * (newRightMotorTachoCount - rightMotorTachoCount) / 180; // dist for R in radians
 
 
 
@@ -118,27 +117,10 @@ public class Odometer implements Runnable {
 
       deltaDisplacement = 0.5 * (distL + distR); // in radians
       deltaTheta = (distL - distR) / TRACK; // in radians
-      // System.out.println(deltaTheta);
-      // theta += Math.toDegrees(deltaTheta);
       dX = deltaDisplacement * Math.sin(deltaTheta + Math.toRadians(theta)); // needs to be in radians
       dY = deltaDisplacement * Math.cos(deltaTheta + Math.toRadians(theta));
-      // x = x+dX;
-      // y = y+dY;
-
-      // TODO Remove this
-      /*
-       * System.out.println(x); System.out.println(position[0]);
-       * 
-       * x = 7;
-       * 
-       * System.out.println(x); System.out.println(position[0]);
-       */
-      // end remove this
-
-
-      // TODO Update odometer values with new calculated values, eg
-      // odo.update(dx, dy, dtheta);\
-      odo.update(dX, dY, Math.toDegrees(deltaTheta));
+     
+      odo.update(dX, dY, Math.toDegrees(deltaTheta)); // Update odometer values with new calculated values, eg
 
 
       // this ensures that the odometer only runs once every period
