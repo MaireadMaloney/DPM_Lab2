@@ -6,24 +6,16 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.SampleProvider;
 
 public class OdometryCorrection implements Runnable {
+  /*
+   * Variable that determines how long to sleep for correction in ms.
+   */
   private static final long CORRECTION_PERIOD = 10;
-  // private static final difference =
   private Odometer odometer = Resources.odometer;
   private EV3ColorSensor colorSensor = Resources.colorSensor;
-  // private SampleProvider intensityVal = colorSensor.getRedMode();
 
 
   // Array to store color detected by light sensor
   private float sampleData[] = new float[1];
-
-
-  // private float[] RGBValues = new float[3];
-
-  // RGB value minimum for white
-  // private static double WHITEVAL = 0.20;
-
-  // variable for overall brightness
-  // private double brightnessLevel;
 
   // Robot direction variables
   private Boolean up = true;
@@ -46,50 +38,45 @@ public class OdometryCorrection implements Runnable {
       colorSensor.getRedMode().fetchSample(sampleData, 0);
       brightness = sampleData[0];
 
-      int i = 1;
-      int j = 1;
-      int k = 3;
-      int f = 3;
+      int lineCountUp = 1;
+      int lineCountRight = 1;
+      int lineCountDown = 3;
+      int lineCountLeft = 3;
 
       while (up) { // going up, Y is increasing
         colorSensor.getRedMode().fetchSample(sampleData, 0);
         brightness = sampleData[0];
         if (brightness * 100 < 30.00) {
-          Sound.beep();
-          odometer.setY(TILE_SIZE * i);
-          if (i > 2) {
+          odometer.setY(TILE_SIZE * lineCountUp);
+          if (lineCountUp > 2) {
             up = false;
             right = true;
           }
-          i++;
+          lineCountUp++;
         }
       }
       while (right) { // going right, X is increasing
         colorSensor.getRedMode().fetchSample(sampleData, 0);
         brightness = sampleData[0];
-        // System.out.println(sampleData[0]);
         if (brightness * 100 < 30.00) {
-          Sound.beep();
-          odometer.setX(TILE_SIZE * j);
-          if (j > 2) {
+          odometer.setX(TILE_SIZE * lineCountRight);
+          if (lineCountRight > 2) {
             right = false;
             down = true;
           }
-          j++;
+          lineCountRight++;
         }
       }
       while (down) { // going right, X is increasing
         colorSensor.getRedMode().fetchSample(sampleData, 0);
         brightness = sampleData[0];
-        // System.out.println(sampleData[0]);
         if (brightness * 100 < 30.00) {
-          Sound.beep();
-          odometer.setY(TILE_SIZE * k);
-          if (k < 2) {
+          odometer.setY(TILE_SIZE * lineCountDown);
+          if (lineCountDown < 2) {
             down = false;
             left = true;
           }
-          k--;
+          lineCountDown--;
         }
 
       }
@@ -97,15 +84,13 @@ public class OdometryCorrection implements Runnable {
       while (left) { // going right, X is increasing
         colorSensor.getRedMode().fetchSample(sampleData, 0);
         brightness = sampleData[0];
-        // System.out.println(sampleData[0]);
         if (brightness * 100 < 30.00) {
-          Sound.beep();
-          odometer.setX(TILE_SIZE * f);
-          if (f < 2) {
+          odometer.setX(TILE_SIZE * lineCountLeft);
+          if (lineCountLeft < 2) {
             left = false;
             up = true;
           }
-          f--;
+          lineCountLeft--;
         }
       }
       // this ensures the odometry correction occurs only once every period
